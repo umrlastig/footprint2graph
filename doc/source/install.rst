@@ -12,15 +12,19 @@ Installation
 
 
 Dependencies
-^^^^^^^^^^^^^
+^^^^^^^^^^^^
 
 **footprint2graph** depends on the following Python packages (installed automatically with the library):
 
-* `tracklib <https://pypi.org/project/tracklib/>`_ : a GPS trajectory processing library used for filtering, resampling, summarization, selection, generalization, map matching and trajectory aggregation.
+* `tracklib <https://pypi.org/project/tracklib/>`_ : a GPS trajectory processing library used for filtering, resampling, summarization, selection, generalization, map matching and trajectory aggregation.selection, generalization, map matching and trajectory aggregation.
 * `matplotlib <https://pypi.org/project/matplotlib/>`_ - Used for colormaps and 2D plotting.
-* osgeo : gdal, ogr, osr (pour la partie vectorisation)
-* Shapely (centerline et smooth)
-* Fiona, Rasterio pour charger des données (SHP et TIF).
+* Shapely <https://pypi.org/project/shapely/>_ : used for centerline extraction and smoothing.
+* Fiona <https://pypi.org/project/fiona/>_ and Rasterio <https://pypi.org/project/rasterio/>_ : used to load vector (SHP) and raster (TIF) data.
+
+
+**GDAL** is also required for the vectorization workflow. It must be installed separately on the system. Installation instructions are available on the GDAL download page <https://gdal.org/en/stable/download.html>_.
+
+The Python package osgeo (including the GDAL, OGR and OSR modules) is used by footprint2graph for vectorization.
 
 
 Install standard release

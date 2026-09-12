@@ -55,8 +55,23 @@ We acknowledge Filip Todić for the GitHub repository `centerline <https://githu
 How to Cite Footprint2graph
 -------------------------------------
 
-To be completed
+If you use **footprint2graph**, please cite:
 
+Van Damme, M.-D., & Méneroux, Y. (2026).
+*footprint2graph: An Open-Source Python Pipeline for Generating Mobility Networks from GNSS Trajectories*
+(Version 1.1.1). Zenodo.
+https://doi.org/10.5281/zenodo.20800149
+
+.. code-block:: bibtex
+
+   @softwareversion{vandamme:hal-05665743v1,
+     title        = {{footprint2graph: An Open-Source Python Pipeline for Generating Mobility Networks from GNSS Trajectories}},
+     author       = {van Damme, Marie-Dominique and Méneroux, Yann},
+     publisher    = {{Zenodo}},
+     year         = {2026},
+     doi          = {10.5281/zenodo.20800149},
+     version      = {v1.1.1}
+   }
 
 
 
