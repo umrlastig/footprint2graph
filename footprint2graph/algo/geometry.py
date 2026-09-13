@@ -10,34 +10,63 @@ import numpy as np
 
 
 """
-
-- snap_lines_to_connect
-
-- line_distance
-- nearest_points
-
-- segment_distance
-
-
+Fonctions qui manipulent les géométries (de type ligne) des arcs 
+sans gérer la topologie (en particulier les noeuds).
 """
 
 
 def snap_lines_to_connect(collection, tolerance=1, log_level='ERROR'):
     """
-    Accroche 2 traces d'une même collection.
+    Snap lines representing network arcs to connect them within a given tolerance.
+
+    This operation handles the splitting of lines when snapping occurs 
+               away from their endpoints. However, it does not handle 
+               the small line segments created by this splitting operation.
+
+    Parameters
+    ----------
+    collection : TrackCollection
+        Collection of line geometries representing network arcs.
+    tolerance : float, optional
+        Maximum distance within which line geometries are snapped together,
+        in the units of the coordinate reference system. Default is 1.
+    log_level : str, optional
+        Logging level used during the operation. Default is 'ERROR'.
+
+    Returns
+    -------
+    TrackCollection
+        A new collection containing the snapped line geometries.
+
     """
 
     # On indexe la collection pour rechercher uniquement les traces candidates
     #    qui par définition sont proches.
+    print ('')
     index = tkl.SpatialIndex(collection)
+    unit = max(math.ceil(tolerance/index.dX), math.ceil(tolerance/index.dY))
 
-    # Compteur pour les nouvelles traces
-    cptTrack = collection.size() + 1
+    if log_level == 'INFO' or log_level == 'DEBUG':
+        print ('')
+        print ('    Start snapping')
+    if log_level == 'DEBUG':
+        print ('        Unit for search in index ', unit)
 
-    for track1 in collection:
+    CUTS = {}
 
-        for track2 in collection:
+    # for track1 in collection:
+    boucle = progressbar.progressbar(range(collection.size()))
+    for i in boucle:
+        track1 = collection.getTrack(i)
+
+        # for track2 in collection:
+        voisins = index.neighborhood(track1, unit=unit)
+        for j in voisins:
+            track2 = collection.getTrack(j)
+
             if track1.tid == track2.tid:
+                if log_level == 'DEBUG':
+                    print("        track1 and track2 are the same tracks")
                 continue
 
             if not tkl.intersects(track1, track2):
@@ -45,56 +74,78 @@ def snap_lines_to_connect(collection, tolerance=1, log_level='ERROR'):
                 # Vérifier la distance
                 dist = line_distance(track1, track2)
                 if dist < tolerance and dist > 0.0:
-                    # print("    Snap needed", track1.tid, track2.tid)
 
+                    if log_level == 'DEBUG':
+                        print("        Snap needed", track1.tid, track2.tid, round(dist, 2))
 
                     # Trouver les points les plus proches pour les 2 traces
                     idxi, idxj = nearest_points(track1, track2)
                     p2 = track2.getObs(idxj).position
 
-
-                    # On remplace dans la première trace le point
-                    #             le plus proche pour qu'il soit dans trace 2
+                    # On remplace dans la première trace
+                    #        le point le plus proche pour qu'il soit dans trace 2
                     track1.setObs(idxi, tkl.Obs(p2, tkl.ObsTime()))
-
 
                     # On coupe la trace 1 si besoin
                     if idxi > 0 and idxi < track1.size()-1:
                         if log_level == 'DEBUG':
-                            print ('    on coupe la trace 1')
-                        # on crée 2 nouvelles traces
-                        s1 = track1.extract(0, idxi)
-                        s1.tid = cptTrack
-                        cptTrack += 1
-                        collection.addTrack(s1)
+                            print ('        on coupe la trace 1')
 
-                        s2 = track1.extract(idxi, track1.size()-1)
-                        s2.tid = cptTrack
-                        cptTrack += 1
-                        collection.addTrack(s2)
+                        if i not in CUTS:
+                            CUTS[i] = []
+                        CUTS[i].append((idxi,p2))
 
-                        # on supprime la track1
-                        collection.removeTrack(track1)
-
-
-                    # On coupe la trace qui doit l'être
+                    # On coupe la trace 2 si besoin
                     if idxj > 0 and idxj < track2.size()-1:
                         if log_level == 'DEBUG':
                             print ('    on coupe la trace 2')
-                        # on en crée 2 nouveaux
-                        s1 = track2.extract(0, idxj)
-                        s1.tid = cptTrack
-                        cptTrack += 1
-                        collection.addTrack(s1)
 
-                        s2 = track2.extract(idxj, track2.size()-1)
-                        s2.tid = cptTrack
-                        cptTrack += 1
-                        collection.addTrack(s2)
+                        if j not in CUTS:
+                            CUTS[j] = []
+                        CUTS[j].append((idxj,p2))
 
-                        # on supprime la track2
-                        collection.removeTrack(track2)
+    # On coupe les traces
 
+    # Compteur pour les nouvelles traces
+    cptTrack = collection.size() + 1
+
+    TRACK_TO_REMOVE = []
+    for idtrack in CUTS:
+        obss = CUTS[idtrack]
+        res = sorted(obss, key=lambda t: t[0])
+        #print (idtrack)
+        #if len(obss) > 1:
+        #    print (collection.getTrack(idtrack).toWKT())
+
+        track = collection.getTrack(idtrack)
+
+        for i in range(len(res)):
+            idx = res[i][0]
+
+            if i == len(res)-1:
+                end = track.size()-1
+            else:
+                end = res[i+1][0]
+
+            # print (0, idx, end, track.size())
+
+            # on en crée 2 nouveaux
+            s1 = track.extract(0, idx)
+            s1.tid = cptTrack
+            cptTrack += 1
+            collection.addTrack(s1)
+
+
+            s2 = track.extract(idx, end)
+            s2.tid = cptTrack
+            cptTrack += 1
+            collection.addTrack(s2)
+
+        # on supprime la track
+        TRACK_TO_REMOVE.append(track)
+
+    for track in TRACK_TO_REMOVE:
+        collection.removeTrack(track)
 
     return collection
 
@@ -110,7 +161,24 @@ def segment_distance(a1, a2, b1, b2):
     )
 
 
+
 def line_distance(track1, track2):
+    '''
+    Distance entre 2 traces: distance minimum entre 2 sommets
+
+    Parameters
+    ----------
+    track1 : TYPE
+        DESCRIPTION.
+    track2 : TYPE
+        DESCRIPTION.
+
+    Returns
+    -------
+    min_dist : TYPE
+        DESCRIPTION.
+
+    '''
     min_dist = float('inf')
 
     for i in range(track1.size() - 1):
@@ -281,7 +349,7 @@ def get_final_edges(edge_id, splits):
 
 def find_connection_candidate(network, edge, extension, side):
     '''
-    Search for the closest intersection between the extension and an edge.
+    Searches for the closest network edge that intersects an extension of a given edge.
     '''
 
 
@@ -328,30 +396,42 @@ def find_connection_candidate(network, edge, extension, side):
 
 
 
-def pull_point_to_other_tracks(cutCollection, buffer_size = 10, alpha = 0.6):
-    '''
-    Approcher les trajectoires entre elles. On remplace chaque point par le 
-    centre de gravité des points des trajectoires voisines) entre l'itération 
-    In et l'itération In+1, et voir si cela améliore plus de détection dans 
-    le résultat de In+1.
+def pull_point_to_other_tracks(cutCollection, buffer_size=10, alpha=0.6):
+    """
+    Move trajectory points closer to neighboring trajectories to make
+    spatially close trajectories more tightly clustered.
+
+    For each trajectory point, neighboring trajectory points within a given
+    buffer are identified. The point is then moved towards the centroid of
+    these neighboring points. The displacement is controlled by `alpha`.
+
+    This operation is intended to bring trajectories closer together between
+    two successive iterations of the workflow, in order to assess whether
+    this improves the detection of spatial patterns in the resulting network.
 
     Parameters
     ----------
-    cutCollection : TYPE
-        DESCRIPTION.
-    buffer_size : TYPE, optional
-        DESCRIPTION. The default is 10.
-    alpha : TYPE, optional
-        DESCRIPTION. The default is 0.6.
+    cutCollection : TrackCollection
+        Collection of trajectories to be processed.
+    buffer_size : float, optional
+        Size of the buffer used to identify neighboring trajectory points,
+        in the units of the coordinate reference system. Default is 10.
+    alpha : float, optional
+        Weight controlling the displacement of each point towards the
+        centroid of neighboring points. A value of 0 leaves the point
+        unchanged, while a value of 1 moves it to the centroid.
+        Default is 0.6.
 
     Returns
     -------
-    None.
+    TrackCollection
+        A new collection containing the trajectories with their points moved
+        towards neighboring trajectories.
+    """
 
-    '''
+    print ('        Attract points toward the centroid of neighboring trajectory points')
 
     # Create a 2D index
-    print ('        Attract points toward the centroid of neighboring trajectory points')
     #p = index.Property()
     #p.dimension = 2
     #idx2d = index.Index(properties=p)
