@@ -11,7 +11,6 @@ import datetime
 import progressbar
 import numpy as np
 
-# from rtree import index
 from scipy.spatial import Voronoi
 
 try:
@@ -229,8 +228,9 @@ class Shp2centerline(object):
         # ------------------------------------------------------------------------
         if self.verbose:
             print('*['+str(datetime.datetime.now())+']  Center line computation')
+
         self.run()
-        
+
         # ------------------------------------------------------------------------
         # Output center line
         # ------------------------------------------------------------------------
@@ -239,6 +239,7 @@ class Shp2centerline(object):
         self.export2SHP()
         if self.verbose:
             print("done")
+        
 
     def run(self):
         """
@@ -251,9 +252,13 @@ class Shp2centerline(object):
 
         for key in self.dct_polygons.keys():
             poly_geom = self.dct_polygons[key]
-            centerlineObj = Centerline(poly_geom, self.dist, self.clean_dist)
-
-            self.dct_centerlines[key] = centerlineObj.createCenterline(self.verbose)
+            if poly_geom.area > 1:
+                centerlineObj = Centerline(poly_geom, self.dist, self.clean_dist)
+            try:
+                self.dct_centerlines[key] = centerlineObj.createCenterline(self.verbose)
+            except Exception as e:
+                print (e)
+                print('Polygon in ERROR: ', poly_geom)
 
     def importSHP(self):
         """
