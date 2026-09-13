@@ -68,7 +68,7 @@ def density_polygonize(RESPATH, G1_SIZE, G2_SIZE, SEUIL_DENSITE, SEUIL_SURFACE,
     if log_level == 'INFO' or log_level == 'DEBUG':
         print ('    Loading tracks from : ', rep)
     t0 = time.time()
-
+    
     fmt = tkl.TrackFormat({'ext': 'CSV',
                            'srid': 'ENU',
                            'id_E': 1,'id_N': 0, 'id_U': 3,'id_T': 2,
@@ -275,7 +275,7 @@ def density_polygonize(RESPATH, G1_SIZE, G2_SIZE, SEUIL_DENSITE, SEUIL_SURFACE,
     t0 = t1
 
     # =========================================================================
-
+    
     pathB             = respath + 'B_' + prefix + '.asc'
     pathdilatation    = respath + 'dilatation_' + prefix + '.tif'
     patherosion       = respath + 'erosion_' + prefix + '.tif'
@@ -286,7 +286,7 @@ def density_polygonize(RESPATH, G1_SIZE, G2_SIZE, SEUIL_DENSITE, SEUIL_SURFACE,
     roadsurflissepath = respath + 'road_surface_lissee_' + prefix + '.shp'
     squelettepath     = RESPATH + 'network/squelette_' + prefix + '.shp'
 
-    
+
 
     # =========================================================================
     #   On charge le binaire
@@ -474,7 +474,7 @@ def density_polygonize(RESPATH, G1_SIZE, G2_SIZE, SEUIL_DENSITE, SEUIL_SURFACE,
         print ("    Vectorization completed.")
     t0 = t1
 
-
+    
 
     # =========================================================================
     #   Lissage du polygone pour oublier le profil en escalier
@@ -490,6 +490,7 @@ def density_polygonize(RESPATH, G1_SIZE, G2_SIZE, SEUIL_DENSITE, SEUIL_SURFACE,
         print ("    Execution time (seconds):", total)
         print ("    Road surface smoothing completed.")
     t0 = t1
+
 
 
     # =========================================================================
