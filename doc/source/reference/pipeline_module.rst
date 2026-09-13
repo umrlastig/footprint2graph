@@ -4,10 +4,8 @@
 :Date: 08/04/2026
 
 
-"workflow" Module
-==================
-
-
+Workflow Execution
+===================
 
 .. automodule:: footprint2graph.Pipeline
    :members:

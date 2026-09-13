@@ -2,7 +2,7 @@
 
 
 Image
---------------------------
+=======
 
 **pipeline.Image module**
 

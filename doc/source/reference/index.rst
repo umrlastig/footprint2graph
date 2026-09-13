@@ -4,32 +4,21 @@
 :Date: 08/04/2026
 
 
-footprint2graph
-===============
-
-.. figure:: ../img/pipeline.png
-  :width: 1000
-  :align: center
-
-  **Figure 2.** 
-  
-
-
-Subpackages
------------
-
-.. toctree::
-   :maxdepth: 2
-
-   algo
-   pipeline
-
-
-Submodules
------------
+Footprint2graph API
+====================
 
 .. toctree::
    :maxdepth: 1
 
    pipeline_module
+
+
+.. toctree::
+   :maxdepth: 2
+
+   component
+   algo
+
+
+
 

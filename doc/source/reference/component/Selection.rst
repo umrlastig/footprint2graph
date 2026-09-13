@@ -2,7 +2,7 @@
 
 
 Selection
---------------------------
+==========
 
 **pipeline.Selection module**
 

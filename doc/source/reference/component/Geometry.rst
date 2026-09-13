@@ -1,8 +1,8 @@
 .. currentmodule:: pipeline.Geometry
 
 
-Workflow Geometry Component
-----------------------------
+Geometry
+=========
 
 **pipeline.Geometry module**
 

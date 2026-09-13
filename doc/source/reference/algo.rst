@@ -1,11 +1,10 @@
 
 
-"algo" Package
-----------------
+Processing Functions
+=====================
 
 .. toctree::
    :maxdepth: 1
-
 
    ./algo/centerline.rst
    ./algo/conflation.rst
