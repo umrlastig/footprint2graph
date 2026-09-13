@@ -15,4 +15,5 @@ psutil
 pyyaml
 rasterio
 scipy
+scikit-image
 
