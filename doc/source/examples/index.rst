@@ -26,7 +26,7 @@ Cet exemple, décliné en une version *quickstart* et une version détaillée, o
 Génération des jeux de données publiés
 ---------------------------------------
 
-Ces trois exemples contiennent le code source utilisé pour générer trois jeux de données publiés dans l'entrepôt de données `Recherche Data Gouv <https://entrepot.recherche.data.gouv.fr/dataverse/intforout>`_. Ces jeux de données couvrent :
+Ces trois exemples contiennent le code source utilisé pour générer trois jeux de données publiés dans l'entrepôt de données `Recherche Data Gouv <https://entrepot.recherche.data.gouv.fr/dataset.xhtml?persistentId=doi:10.57745/TW8CE0>`_. Ces jeux de données couvrent :
 
 * une petite zone située dans le Parc naturel régional des Bauges ;
 * deux petites zones situées dans la vallée de Chamonix.
