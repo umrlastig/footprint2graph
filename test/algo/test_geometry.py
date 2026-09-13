@@ -39,7 +39,6 @@ class TestAlgoGeometry(unittest.TestCase):
         # plt.show()
 
         # On déforme les données pour créer des déconnexions
-
         TRACKS = []
         tolerance = 1.5
         for track in collection:
