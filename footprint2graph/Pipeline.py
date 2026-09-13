@@ -138,10 +138,11 @@ def run_iteration(pipeline_idx, config, collection=None, log_level='DEBUG'):
     if pipeline_idx > 1:
         mergeNetwork(respath, pipeline_idx, PPV_SEUIL, ELASTIC_COV_DISTANCE, EXTENSION,
                      RESAMPLE_SIZE_FUSION, log_level=log_level)
-
+        
+    
 
     
-def footprint2grap(config, collection, log_level='ERROR'):
+def footprint2graph(config, collection, log_level='ERROR'):
     '''
     '''
     NBITER = int(config['graph_construction']['NUM_ITERATIONS'])
