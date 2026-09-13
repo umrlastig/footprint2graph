@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import os.path
 import unittest
 
 import math
@@ -15,8 +16,8 @@ from footprint2graph import snap_lines_to_connect, skeleton_smoothing
 
 class TestAlgoGeometry(unittest.TestCase):
     
-    def setUp (self):
-        pass
+    def setUp(self):
+        self.resource_path = os.path.join(os.path.split(__file__)[0], "..")
 
     def testSnapLinesToConnec(self):
         # On charge les données d'un réseau
@@ -27,7 +28,7 @@ class TestAlgoGeometry(unittest.TestCase):
                                  'srid':'ENU',
                                  'separator': ';',
                                  'pos_direction':4})
-        netpath = "/home/md_vandamme/7_LIB/footprint2graph/data/network_test.csv"
+        netpath = os.path.join(self.resource_path, 'network_test.csv')
         network = tkl.NetworkReader.readFromFile(netpath, fmt, verbose=False)
         collection = network.getAllEdgeGeoms()
         # collection.plot('k-')
