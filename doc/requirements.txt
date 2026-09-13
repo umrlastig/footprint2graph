@@ -14,3 +14,5 @@ shapely
 psutil
 pyyaml
 rasterio
+scipy
+
