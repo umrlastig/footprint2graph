@@ -11,7 +11,11 @@ import os
 def log_event(RESPATH, event):
     path = RESPATH
     with open(path, "w") as f:
-        f.write(json.dumps(event) + "\n")
+        try:
+            f.write(json.dumps(event) + "\n")
+        except TypeError as e:
+            print ("EVENT TO LOG: ", event)
+            print(f"ERROR de sérialisation : {e}")
 
 
 
