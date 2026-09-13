@@ -26,14 +26,17 @@ Cet exemple, décliné en une version *quickstart* et une version détaillée, o
 Génération des jeux de données publiés
 ---------------------------------------
 
-Ces deux exemples contiennent le code source qui a permis de générer deux jeux de données publiés dans l'entrepot de données 
-`Recherche Data Gouv <https://entrepot.recherche.data.gouv.fr/dataverse/intforout>`_  et qui sont situés dans deux petites zones situées dans le Parc Régional des Bauges et dans la vallée de Chamonix. Ces deux exemples font partie d'un livrable du Work Package 2 du `projet de recherche IntForOut <https://www.umr-lastig.fr/intforout/>`_ .
+Ces trois exemples contiennent le code source utilisé pour générer trois jeux de données publiés dans l'entrepôt de données `Recherche Data Gouv <https://entrepot.recherche.data.gouv.fr/dataverse/intforout>`_. Ces jeux de données couvrent :
 
-Les données GNSS ont été produites et délivrées par la plateforme **Outdoorvision** (service fournissant des traces partagées volontairement par des utilisateurs lors de leurs activités de plein air), plateforme soutenue par le *Pôle Ressources National Sports de Nature* (**PRNSN**). Dans le cadre du projet de recherche IntForOut, les traces ont été extraites de la plateforme, après nettoyage, filtrage et anonymisation.
+* une petite zone située dans le Parc naturel régional des Bauges ;
+* deux petites zones situées dans la vallée de Chamonix.
+
+Ces trois exemples font partie d'un livrable du Work Package 2 du `projet de recherche IntForOut <https://www.umr-lastig.fr/intforout/>`_.
+
+Les données GNSS ont été produites et fournies par la plateforme **Outdoorvision**, un service qui met à disposition des traces partagées volontairement par des utilisateurs lors de leurs activités de plein air. La plateforme est soutenue par le *Pôle Ressources National Sports de Nature* (**PRNSN**). Dans le cadre du projet de recherche IntForOut, les traces ont été extraites de la plateforme, puis nettoyées, filtrées et anonymisées.
 
 
-Réseaux de mobilité pédestre
-""""""""""""""""""""""""""""""
+**Réseaux de mobilité pédestre** :
 
 .. nbgallery::
     :name: intforout-gallery
