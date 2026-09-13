@@ -15,8 +15,13 @@ import sys
 
 import tracklib as tkl
 
-from footprint2graph import skeleton_smoothing, conflateTurnOnTerminalEdge, snap_lines_to_connect
-from footprint2graph import log_event
+from footprint2graph import (
+    skeleton_smoothing,
+    conflateTurnOnTerminalEdge,
+    snap_lines_to_connect,
+    log_event
+)
+
 
 
 def addTopologyToNetwork(RESPATH, SEARCH, h=10,
@@ -29,9 +34,6 @@ def addTopologyToNetwork(RESPATH, SEARCH, h=10,
     idx = int (pipeline_idx)
     prefix = str(idx)
 
-    # Pour la construction du réseau
-    tolerance     = 0.1    # 0.05
-
     squelettepath = str(RESPATH) + 'network/squelette_' + str(idx) + '.shp'
 
     if log_level == 'ERROR':
@@ -42,6 +44,9 @@ def addTopologyToNetwork(RESPATH, SEARCH, h=10,
 
     # =========================================================================
     #          CHARGEMENT DU SQUELETTE
+
+    # Pour la construction du réseau
+    tolerance = 0.05    # 0.1
 
     collection = tkl.TrackCollection()
     cptTrack = 1
@@ -80,7 +85,8 @@ def addTopologyToNetwork(RESPATH, SEARCH, h=10,
 
 
     # =========================================================================
-    #          Création d'un réseau surtout pour la fusion des arcs
+    #   Création d'un réseau avec topologie
+    #            pour la fusion des arcs.
     #
 
     input_file = str(RESPATH) + 'network/tmp_in.csv'
@@ -88,17 +94,18 @@ def addTopologyToNetwork(RESPATH, SEARCH, h=10,
     try:
         os.remove(input_file)
     except FileNotFoundError:
-        print ('    ' + input_file + " not exists")
+        if log_level == 'DEBUG':
+            print ('    ' + input_file + " not exists")
     try:
         os.remove(output_file)
     except FileNotFoundError:
-        print ('    ' + output_file + " not exists")
+        if log_level == 'DEBUG':
+            print ('    ' + output_file + " not exists")
 
 
     with open(input_file, "w") as f:
         for track in collection:
             f.write(track.toWKT() + ";" + str(track.tid) + "\n")
-
 
     tkl.Topology.create_topology(input_file, '2154', output_file)
     fmt = tkl.NetworkFormat({
@@ -109,7 +116,9 @@ def addTopologyToNetwork(RESPATH, SEARCH, h=10,
            "srid": "ENU",
            "separator": ",",
            "header": 1})
-    network = tkl.NetworkReader.readFromFile(output_file, fmt, verbose=False)
+    print ('')
+    network = tkl.NetworkReader.readFromFile(output_file, fmt, verbose=verbose)
+
     collection = tkl.TrackCollection()
     cptTrack = 1
     for edge in network:
@@ -130,7 +139,7 @@ def addTopologyToNetwork(RESPATH, SEARCH, h=10,
                              verbose=verbose)
     print ('')
     if log_level == 'INFO' or log_level == 'DEBUG':
-        print ('    Finished removing hooked parts of the skeleton.')
+        print ('    Finished removing duplicate edges.')
 
 
     # =========================================================================
@@ -139,6 +148,10 @@ def addTopologyToNetwork(RESPATH, SEARCH, h=10,
 
     for track in progressbar.progressbar(collection):
         track = skeleton_smoothing(track, 3, 6)
+
+    print ('')
+    if log_level == 'INFO' or log_level == 'DEBUG':
+        print ('    Finished removing hooked parts of the skeleton.')
 
 
     # =========================================================================
@@ -149,6 +162,8 @@ def addTopologyToNetwork(RESPATH, SEARCH, h=10,
     for track in collection:
         track = tkl.simplify(track, tolerance, tkl.MODE_SIMPLIFY_DOUGLAS_PEUCKER,
                              verbose=verbose)
+
+    print ('')
     if log_level == 'INFO' or log_level == 'DEBUG':
         print ('    Finished simplification of the skeleton.')
 
@@ -159,8 +174,10 @@ def addTopologyToNetwork(RESPATH, SEARCH, h=10,
     #
     tolerance = 1
     NB_START = collection.size()
+
     collection = snap_lines_to_connect(collection, tolerance, log_level=log_level)
     NB_END = collection.size()
+
     if log_level == 'INFO' or log_level == 'DEBUG':
         print ('    Number of edges in the skeleton (after snapping):', collection.size())
         print ('    Edge count difference after snapping : ', NB_END - NB_START)
