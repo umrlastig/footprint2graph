@@ -72,7 +72,7 @@ We acknowledge Filip Todić for the GitHub repository (https://github.com/fitodi
 
 ## Development & Contributions
 
-* Institute: LASTIG, Univ Gustave Eiffel, Géodata Paris, IGN
+* Institute: Univ Gustave Eiffel, Géodata Paris, IGN, LASTIG
 * License: MIT license
 * Authors:
   - Marie-Dominique Van Damme
