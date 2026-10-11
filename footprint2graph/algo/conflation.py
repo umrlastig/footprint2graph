@@ -13,23 +13,52 @@ from tracklib.algo.comparison import compare, MODE_COMPARISON_POINTWISE
 from footprint2graph import log_event
 
 
-# ---------------------------------------------------------------------------------
-# Elastic conflation of segment geometries on a network
-# ---------------------------------------------------------------------------------
-# Inputs: - geom      : a collection of geometries (TrackCollection)
-#         - network   : network containing reference nodes
-#         - threshold : distance btw ending points above which conflation aborted
-#          - h         : covariance distance of elastic correction
-# Output: a collection of geometries (TrackCollection) preserving the shape of the 
-# input geometries while enforcing constraints on ending points defined by network
-# Each object in geom must have a tid matching with edge ids of the network
-# ---------------------------------------------------------------------------------
-# Conflation is performed with 'colocation least squares' method and gaussian 
-# covariogram of standard deviation h
-# ---------------------------------------------------------------------------------
 def conflateOnNetwork(geom, network, threshold=1e300, h=30,
-                      RESPATH=None, prefix=None, verbose=True):
-    
+                      RESPATH=None, prefix='1', verbose=True):
+    '''
+    Elastic conflation of segment geometries onto a network, preserving the shape 
+    of the input geometries while enforcing endpoint constraints imposed by the network.
+
+    Conflation is performed using the colocation least-squares method
+    and a Gaussian covariogram with standard deviation h.
+
+    Parameters
+    ----------
+    geom : TrackCollection
+        Collection of geometries to conflate.
+    network : Network
+        Network containing the reference nodes.
+    threshold : float, optional
+        Maximum distance between segment endpoints for conflation to
+        proceed. Conflation is aborted when this distance is exceeded.
+        Defaults to 1e300.
+    h : float, optional
+        Standard deviation of the Gaussian covariogram controlling the
+        spatial extent of the elastic correction. Defaults to 30.
+    RESPATH : str, optional
+        Path to the file in which conflation statistics are recorded,
+        including:
+        - Number of conflated segments
+        - Percentage of conflated segments
+        - Total distortion RMSE (m)
+        - Maximum distortion RMSE (%)
+        Defaults to None.
+    prefix : str, optional
+        Prefix used to identify the workflow iteration in the log records.
+        Defaults to '1'.
+    verbose : bool, optional
+        If True, display additional information during the computation.
+        Defaults to True.
+
+    Returns
+    -------
+    out : TrackCollection
+        Collection of geometries that preserves the shape of the input
+        geometries while enforcing endpoint constraints defined by the
+        network. Each geometry in geom must have a tid matching an edge
+        ID in the network.
+    '''
+
     out = TrackCollection()
     if (verbose):
         print("-----------------------------------------------------------------------------------------")
@@ -99,23 +128,40 @@ def conflateOnNetwork(geom, network, threshold=1e300, h=30,
 
 def conflateTurnOnTerminalEdge(network, nid, SEARCH, h = 10, log_level='ERROR'):
     '''
-    conflate point of maximum curvature with the summit of a terminal edge
+    Conflate the point of maximum curvature with the endpoint of a terminal edge.
+
+    During skeletonization, turns may be represented by two arcs, one of
+    which corresponds to the height of the turn, forming an inverted T-shaped
+    pattern. This representation can introduce geometric distortions.
+
+    This function corrects such distortions by conflating the two arcs
+    leading to the turn vertex, so that the point of maximum curvature
+    coincides with the endpoint of a terminal edge.
+
+    The operation is applied to a network node incident to exactly three
+    edges matching the expected pattern.
 
     Parameters
     ----------
-    network : TYPE
-        DESCRIPTION.
-    nid : TYPE
-        DESCRIPTION.
-    SEARCH : TYPE
-        DESCRIPTION.
-    h : TYPE, optional
-        DESCRIPTION. The default is 10.
+    network : Network
+        Network containing the geometries of the edges incident to the node.
+    nid : int
+        Identifier of the network node to be relocated to the turn vertex.
+    SEARCH : float
+        Maximum length of an edge to be considered a terminal edge
+        associated with a turn vertex. The terminal endpoint must also
+        satisfy the isolation criterion.
+    h : float, optional
+        Spatial extent of the elastic correction, in meters, used to conflate the
+        point of maximum curvature with the endpoint of the terminal edge.
+        Defaults to 10.
+    log_level : str, optional
+        Logging level. Defaults to 'ERROR'.
 
     Returns
     -------
-    None.
-
+    None
+        The network is modified in place.
     '''
 
     # print ('    ', nid)

@@ -5,6 +5,7 @@ Trajectory Segment Aggregation
 ===============================
 
 **algo.fusion module**
+-----------------------
 
 This module provides functions aimed at producing the best geometric 
 representation of network edges from a topological skeleton.
@@ -22,9 +23,12 @@ function that performs track segment merging using the tracklib library.
 
 
 
+Aggregate Functions
+---------------------
+
 
 Aggregate by edge
--------------------
+^^^^^^^^^^^^^^^^^^
 
 .. currentmodule:: algo.fusion
 
@@ -33,7 +37,7 @@ Aggregate by edge
 
 
 Aggregate track segments for an edge
---------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. currentmodule:: algo.fusion
 

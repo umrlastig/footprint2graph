@@ -1,16 +1,28 @@
 .. currentmodule:: algo.conflation
 
 
-Conflation
------------------------
+Trajectory-to-Network Conflation
+=================================
 
 **algo.conflation module**
+----------------------------
+
+.. autosummary::
+   :nosignatures:
+
+   conflateOnNetwork
+   conflateTurnOnTerminalEdge
 
 
 
-.. automodule:: footprint2graph.algo.conflation
-   :members:
-   :undoc-members:
-   :show-inheritance:
+Conflation Functions
+---------------------
+
+.. currentmodule:: footprint2graph.algo.conflation
+
+.. autofunction:: conflateOnNetwork
+
+.. autofunction:: conflateTurnOnTerminalEdge
+
 
 
